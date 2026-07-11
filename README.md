@@ -31,12 +31,3 @@ HTML・CSS・JavaScriptのみで構成されているため、GitHub Pagesでそ
 ├── script.js    # 計算処理
 └── README.md
 ```
-
-## GitHub Pagesで公開する
-
-1. このプロジェクトをGitHubリポジトリへプッシュします。
-2. リポジトリの **Settings** → **Pages** を開きます。
-3. **Build and deployment** のSourceで **Deploy from a branch** を選択します。
-4. 公開するブランチと `/ (root)` を選択して保存します。
-
-デプロイが完了すると、Pages画面に公開URLが表示されます。
