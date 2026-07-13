@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="時間範囲の計算と、hh:mm・分の相互変換ができるシンプルな時間計算ツールです。" />
+    <meta name="description" content="時間範囲の計算、hh:mm・分の相互変換、時間の加算・減算ができるシンプルな時間計算ツールです。" />
     <title>Time Tools — 時間計算ツール</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,6 +28,9 @@
           </button>
           <button class="nav-button" type="button" data-target="convert-panel">
             <span class="nav-number">02</span><span>時間変換</span>
+          </button>
+          <button class="nav-button" type="button" data-target="calculation-panel">
+            <span class="nav-number">03</span><span>加算・減算</span>
           </button>
         </nav>
 
@@ -61,7 +64,11 @@
             <div class="converter-fields">
               <label class="field">
                 <span>時間 : 分</span>
-                <input id="convert-time" type="text" value="02:30" inputmode="numeric" placeholder="02:30" aria-describedby="time-error" />
+                <span class="segmented-time" aria-describedby="time-error">
+                  <input id="convert-hours" type="number" value="2" min="0" step="1" inputmode="numeric" aria-label="時間" />
+                  <b aria-hidden="true">:</b>
+                  <input id="convert-time-minutes" type="number" value="30" min="0" max="59" step="1" inputmode="numeric" aria-label="分" />
+                </span>
               </label>
               <span class="convert-mark" aria-hidden="true">⇄</span>
               <label class="field">
@@ -71,6 +78,27 @@
             </div>
             <p class="error-message" id="time-error"></p>
             <p class="converter-hint">どちらの欄からでも入力できます。</p>
+          </form>
+        </section>
+
+        <section class="tool-panel" id="calculation-panel" hidden>
+          <div class="panel-heading">
+            <div><p class="section-number">03</p><h2>時間を加算・減算</h2></div>
+            <p>時間と演算子を自由に組み合わせて計算します。</p>
+          </div>
+          <form id="calculation-form" class="calculation-form">
+            <div id="expression-list" class="expression-list" aria-label="計算する時間"></div>
+            <button id="add-time-box" class="add-box-button" type="button">
+              <span aria-hidden="true">＋</span> 時間を追加
+            </button>
+            <p id="calculation-error" class="error-message" aria-live="polite"></p>
+            <div class="result-card calculation-result" aria-live="polite">
+              <div>
+                <p class="result-label">計算結果</p>
+                <p class="result-main"><strong id="calculation-result">00:00</strong></p>
+              </div>
+              <div class="result-meta"><span>合計 <strong id="calculation-total">0分</strong></span></div>
+            </div>
           </form>
         </section>
       </main>
