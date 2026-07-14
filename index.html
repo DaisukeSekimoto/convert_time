@@ -22,6 +22,11 @@
       </header>
 
       <main>
+        <div class="view-switcher" role="group" aria-label="ツールの表示方法">
+          <span>表示</span>
+          <button class="view-button active" type="button" data-view="tabs" aria-pressed="true">タブ</button>
+          <button class="view-button" type="button" data-view="all" aria-pressed="false">一覧</button>
+        </div>
         <nav class="tool-nav" aria-label="ツールを選択">
           <button class="nav-button active" type="button" data-target="range-panel">
             <span class="nav-number">01</span><span>時間範囲</span>
