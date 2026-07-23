@@ -101,7 +101,31 @@ function calculateExpression() {
   $("#calculation-total").textContent = hasError ? "—" : `${total}分`;
 }
 
-function addTimeBox(hours = 0, minutes = 0) {
+function setDurationFormat(item, mode) {
+  const timeField = item.querySelector(".expression-time");
+  const hoursInput = item.querySelector(".duration-hours");
+  const minutesInput = item.querySelector(".duration-minutes");
+  const totalMinutesInput = item.querySelector(".duration-total-minutes");
+  const separator = timeField.querySelector("b");
+
+  if (mode === "minutes") {
+    const hours = Math.max(0, Number(hoursInput.value) || 0);
+    const minutes = Math.max(0, Number(minutesInput.value) || 0);
+    totalMinutesInput.value = Math.floor(hours) * 60 + Math.floor(minutes);
+    hoursInput.hidden = minutesInput.hidden = separator.hidden = true;
+    totalMinutesInput.hidden = false;
+    timeField.classList.add("minutes-mode");
+  } else {
+    const total = Math.max(0, Math.floor(Number(totalMinutesInput.value) || 0));
+    hoursInput.value = Math.floor(total / 60);
+    minutesInput.value = total % 60;
+    hoursInput.hidden = minutesInput.hidden = separator.hidden = false;
+    totalMinutesInput.hidden = true;
+    timeField.classList.remove("minutes-mode");
+  }
+}
+
+function addTimeBox(hours = 0, minutes = 0, mode = $("#default-duration-format").value) {
   const item = document.createElement("div");
   const isFirst = $("#expression-list").children.length === 0;
   item.className = "expression-item";
@@ -123,6 +147,7 @@ function addTimeBox(hours = 0, minutes = 0) {
   formatSelect.className = "duration-format";
   formatSelect.setAttribute("aria-label", "時間の入力形式");
   formatSelect.append(new Option("hh:mm", "time"), new Option("mm", "minutes"));
+  formatSelect.value = mode;
 
   const hoursInput = document.createElement("input");
   hoursInput.className = "duration-hours";
@@ -167,9 +192,12 @@ function addTimeBox(hours = 0, minutes = 0) {
 
   item.append(operator, formatSelect, timeField, removeButton);
   $("#expression-list").append(item);
+  setDurationFormat(item, mode);
   updateRemoveButtons();
   calculateExpression();
-  if ($$(".expression-item").length > 2) hoursInput.focus();
+  if ($$(".expression-item").length > 2) {
+    (mode === "minutes" ? totalMinutesInput : hoursInput).focus();
+  }
 }
 
 let viewMode = "tabs";
@@ -231,32 +259,15 @@ $("#convert-hours").addEventListener("input", convertToMinutes);
 $("#convert-time-minutes").addEventListener("input", convertToMinutes);
 $("#convert-minutes").addEventListener("input", convertToTime);
 $("#add-time-box").addEventListener("click", () => addTimeBox());
+$("#default-duration-format").addEventListener("change", (event) => {
+  try { localStorage.setItem("time-tools-default-duration-format", event.target.value); } catch (_) {}
+});
 $("#expression-list").addEventListener("input", calculateExpression);
 $("#expression-list").addEventListener("change", (event) => {
   const select = event.target.closest(".duration-format");
   if (!select) return;
   const item = select.closest(".expression-item");
-  const timeField = item.querySelector(".expression-time");
-  const hoursInput = item.querySelector(".duration-hours");
-  const minutesInput = item.querySelector(".duration-minutes");
-  const totalMinutesInput = item.querySelector(".duration-total-minutes");
-  const separator = timeField.querySelector("b");
-
-  if (select.value === "minutes") {
-    const hours = Math.max(0, Number(hoursInput.value) || 0);
-    const minutes = Math.max(0, Number(minutesInput.value) || 0);
-    totalMinutesInput.value = Math.floor(hours) * 60 + Math.floor(minutes);
-    hoursInput.hidden = minutesInput.hidden = separator.hidden = true;
-    totalMinutesInput.hidden = false;
-    timeField.classList.add("minutes-mode");
-  } else {
-    const total = Math.max(0, Math.floor(Number(totalMinutesInput.value) || 0));
-    hoursInput.value = Math.floor(total / 60);
-    minutesInput.value = total % 60;
-    hoursInput.hidden = minutesInput.hidden = separator.hidden = false;
-    totalMinutesInput.hidden = true;
-    timeField.classList.remove("minutes-mode");
-  }
+  setDurationFormat(item, select.value);
   calculateExpression();
 });
 $("#expression-list").addEventListener("click", (event) => {
@@ -270,6 +281,10 @@ $("#expression-list").addEventListener("click", (event) => {
 
 calculateRange();
 convertToMinutes();
+let savedDurationFormat = "time";
+try { savedDurationFormat = localStorage.getItem("time-tools-default-duration-format") || "time"; } catch (_) {}
+if (!["time", "minutes"].includes(savedDurationFormat)) savedDurationFormat = "time";
+$("#default-duration-format").value = savedDurationFormat;
 addTimeBox(0, 0);
 addTimeBox(0, 0);
 let savedView = "tabs";
