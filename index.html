@@ -92,6 +92,13 @@
             <p>時間と演算子を自由に組み合わせて計算します。</p>
           </div>
           <form id="calculation-form" class="calculation-form">
+            <label class="calculation-default-format">
+              <span>入力形式のデフォルト</span>
+              <select id="default-duration-format">
+                <option value="time">hh:mm</option>
+                <option value="minutes">mm（分）</option>
+              </select>
+            </label>
             <div id="expression-list" class="expression-list" aria-label="計算する時間"></div>
             <button id="add-time-box" class="add-box-button" type="button">
               <span aria-hidden="true">＋</span> 時間を追加
