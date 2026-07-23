@@ -129,6 +129,7 @@ function addTimeBox(hours = 0, minutes = 0, mode = $("#default-duration-format")
   const item = document.createElement("div");
   const isFirst = $("#expression-list").children.length === 0;
   item.className = "expression-item";
+  item.dataset.entered = "false";
 
   const operator = document.createElement(isFirst ? "span" : "select");
   if (isFirst) {
@@ -260,9 +261,20 @@ $("#convert-time-minutes").addEventListener("input", convertToMinutes);
 $("#convert-minutes").addEventListener("input", convertToTime);
 $("#add-time-box").addEventListener("click", () => addTimeBox());
 $("#default-duration-format").addEventListener("change", (event) => {
-  try { localStorage.setItem("time-tools-default-duration-format", event.target.value); } catch (_) {}
+  const mode = event.target.value;
+  try { localStorage.setItem("time-tools-default-duration-format", mode); } catch (_) {}
+  $$('.expression-item[data-entered="false"]').forEach((item) => {
+    item.querySelector(".duration-format").value = mode;
+    setDurationFormat(item, mode);
+  });
+  calculateExpression();
 });
-$("#expression-list").addEventListener("input", calculateExpression);
+$("#expression-list").addEventListener("input", (event) => {
+  if (event.target.matches(".duration-hours, .duration-minutes, .duration-total-minutes")) {
+    event.target.closest(".expression-item").dataset.entered = "true";
+  }
+  calculateExpression();
+});
 $("#expression-list").addEventListener("change", (event) => {
   const select = event.target.closest(".duration-format");
   if (!select) return;
